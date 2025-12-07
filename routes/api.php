@@ -26,14 +26,14 @@ Route::middleware(['auth:sanctum','role:admin'])->group(function() {
 
 // Public
 Route::get('/berita', [BeritaController::class, 'index']);
-Route::get('/event', [EventController::class, 'index']);
+Route::get('/events', [EventController::class, 'index']);
 Route::get('/infografis', [InfografisController::class, 'index']);
 
 // Protected (admin)
 Route::middleware(['auth:sanctum', 'role:admin'])->group(function () {
 
     Route::apiResource('/berita', BeritaController::class)->except(['index']);
-    Route::apiResource('/event', EventController::class)->except(['index']);
+    Route::apiResource('/events', EventController::class)->except(['index']);
     Route::apiResource('/infografis', InfografisController::class)->except(['index']);
 
 });
