@@ -5,24 +5,30 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Berita;
+use Illuminate\Support\Facades\Storage;
 
 class BeritaController extends Controller
 {
+    // GET /api/berita (pagination, search, limit)
     public function index(Request $r)
     {
         $query = Berita::query();
 
+        // Search by title
         if ($r->search) {
             $query->where('title', 'like', "%{$r->search}%");
         }
 
+        // Limit latest berita
         if ($r->limit) {
             return $query->latest()->take($r->limit)->get();
         }
 
+        // Default: paginate
         return $query->latest()->paginate(10);
     }
 
+    // POST /api/berita
     public function store(Request $r)
     {
         $r->validate([
@@ -31,23 +37,28 @@ class BeritaController extends Controller
             'image' => 'nullable|image|max:2048',
         ]);
 
-        $image = $r->file('image') ? $r->file('image')->store('news', 'public') : null;
+        // Upload image
+        $imagePath = $r->file('image')
+            ? $r->file('image')->store('news', 'public')
+            : null;
 
-        $news = Berita::create([
-            'title' => $r->title,
+        $berita = Berita::create([
+            'title'   => $r->title,
             'content' => $r->content,
-            'image' => $image
+            'image'   => $imagePath,
         ]);
 
-        return response()->json($news, 201);
+        return response()->json($berita, 201);
     }
 
-    public function show(Berita $news)
+    // GET /api/berita/{berita}
+    public function show(Berita $berita)
     {
-        return $news;
+        return $berita;
     }
 
-    public function update(Request $r, Berita $news)
+    // PUT/PATCH /api/berita/{berita}
+    public function update(Request $r, Berita $berita)
     {
         $r->validate([
             'title' => 'sometimes',
@@ -55,18 +66,30 @@ class BeritaController extends Controller
             'image' => 'nullable|image|max:2048',
         ]);
 
+        // If upload new image, replace old
         if ($r->file('image')) {
-            $news->image = $r->file('image')->store('news', 'public');
+            if ($berita->image && Storage::disk('public')->exists($berita->image)) {
+                Storage::disk('public')->delete($berita->image);
+            }
+
+            $berita->image = $r->file('image')->store('news', 'public');
         }
 
-        $news->update($r->only(['title', 'content']));
+        // Update text fields
+        $berita->update($r->only(['title', 'content']));
 
-        return $news;
+        return $berita;
     }
 
-    public function destroy(Berita $news)
+    // DELETE /api/berita/{berita}
+    public function destroy(Berita $berita)
     {
-        $news->delete();
+        if ($berita->image && Storage::disk('public')->exists($berita->image)) {
+            Storage::disk('public')->delete($berita->image);
+        }
+
+        $berita->delete();
+
         return response()->json(['message' => 'Deleted']);
     }
 }

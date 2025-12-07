@@ -12,15 +12,14 @@ return new class extends Migration
     public function up()
 {
     Schema::create('beritas', function (Blueprint $table) {
-        $table->id();
-        $table->string('judul');
-        $table->text('konten');
-        $table->string('image')->nullable();
-        $table->timestamps();
-    });
+    $table->id();
+    $table->string('title');
+    $table->text('content');
+    $table->string('image')->nullable();
+    $table->timestamps();
+});
+
 }
-
-
     /**
      * Reverse the migrations.
      */
