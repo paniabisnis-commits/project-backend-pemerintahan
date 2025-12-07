@@ -52,10 +52,25 @@ class BeritaController extends Controller
     }
 
     // GET /api/berita/{berita}
-    public function show(Berita $berita)
-    {
-        return $berita;
+    public function show($id)
+{
+    $berita = Berita::find($id);
+
+    if (!$berita) {
+        return response()->json([
+            'success' => false,
+            'message' => 'Berita tidak ditemukan',
+            'data' => null
+        ], 404);
     }
+
+    return response()->json([
+        'success' => true,
+        'message' => 'Detail berita ditemukan',
+        'data' => $berita
+    ]);
+}
+
 
     // PUT/PATCH /api/berita/{berita}
     public function update(Request $r, Berita $berita)
