@@ -36,10 +36,11 @@ class InfografisController extends Controller
         return response()->json($infographics, 201);
     }
 
-    public function show(Infografis $infographic)
-    {
-        return $infographic;
-    }
+    public function show($id)
+{
+    return Infografis::findOrFail($id);
+}
+
 
     public function update(Request $r, Infografis $infographic)
     {
