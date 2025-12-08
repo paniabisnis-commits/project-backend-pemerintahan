@@ -2,7 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
-use App\Http\Controllers\ComplaintController;
+use App\Http\Controllers\PengaduanController;
 use App\Http\Controllers\Api\BeritaController;
 use App\Http\Controllers\Api\EventController;
 use App\Http\Controllers\Api\InfografisController;
@@ -16,13 +16,14 @@ Route::middleware('auth:sanctum')->group(function() {
     Route::post('logout',[AuthController::class,'logout']);
 });
 
-Route::post('pengaduan',[ComplaintController::class,'store']);
-Route::get('pengaduan/stats',[ComplaintController::class,'stats']);
+Route::post('pengaduan',[PengaduanController::class,'store']);
+Route::get('pengaduan/stats',[PengaduanController::class,'stats']);
 
 Route::middleware(['auth:sanctum','role:admin'])->group(function() {
-    Route::get('admin/pengaduan',[ComplaintController::class,'adminIndex']);
-    Route::put('admin/pengaduan/{complaint}/status',[ComplaintController::class,'updateStatus']);
+    Route::get('admin/pengaduan',[PengaduanController::class,'adminIndex']);
+    Route::put('admin/pengaduan/{complaint}/status',[PengaduanController::class,'updateStatus']);
 });
+
 
 // Public
 Route::get('/berita', [BeritaController::class, 'index']);
