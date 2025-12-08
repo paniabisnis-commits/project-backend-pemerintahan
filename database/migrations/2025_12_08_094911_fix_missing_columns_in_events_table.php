@@ -6,23 +6,46 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
         Schema::table('events', function (Blueprint $table) {
-            //
+
+            if (!Schema::hasColumn('events', 'title')) {
+                $table->string('title')->after('id');
+            }
+
+            if (!Schema::hasColumn('events', 'description')) {
+                $table->text('description')->after('title');
+            }
+
+            if (!Schema::hasColumn('events', 'event_date')) {
+                $table->date('event_date')->after('description');
+            }
+
+            if (!Schema::hasColumn('events', 'image')) {
+                $table->string('image')->nullable()->after('event_date');
+            }
+
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
         Schema::table('events', function (Blueprint $table) {
-            //
+
+            if (Schema::hasColumn('events', 'title')) {
+                $table->dropColumn('title');
+            }
+            if (Schema::hasColumn('events', 'description')) {
+                $table->dropColumn('description');
+            }
+            if (Schema::hasColumn('events', 'event_date')) {
+                $table->dropColumn('event_date');
+            }
+            if (Schema::hasColumn('events', 'image')) {
+                $table->dropColumn('image');
+            }
+
         });
     }
 };
