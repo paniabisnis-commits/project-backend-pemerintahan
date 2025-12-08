@@ -51,20 +51,23 @@ class EventController extends Controller
         return $event;
     }
 
-    public function update(Request $request, $id)
-{
-    $event = Event::findOrFail($id);
+    public function update(Request $r, Event $event)
+    {
+        $r->validate([
+            'title' => 'sometimes',
+            'description' => 'sometimes',
+            'event_date' => 'sometimes|date',
+            'image' => 'nullable|image|max:2048',
+        ]);
 
-    $event->update([
-        'title' => $request->title,
-        'description' => $request->description,
-        'event_date' => $request->event_date,
-        'image' => $request->image,
-    ]);
+        if ($r->image) {
+            $event->image = $r->file('image')->store('events', 'public');
+        }
 
-    return response()->json($event);
-}
+        $event->update($r->only(['title', 'description', 'event_date']));
 
+        return $event;
+    }
 
     public function destroy(Event $event)
     {
