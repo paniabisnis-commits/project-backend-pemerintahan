@@ -9,20 +9,19 @@ return new class extends Migration
     /**
      * Run the migrations.
      */
-    public function up(): void
-    {
-        Schema::table('infografis', function (Blueprint $table) {
-            //
-        });
-    }
+    public function up()
+{
+    Schema::table('infografis', function (Blueprint $table) {
+        $table->renameColumn('judul', 'title');
+        $table->renameColumn('gambar', 'image');
+    });
+}
 
-    /**
-     * Reverse the migrations.
-     */
-    public function down(): void
-    {
-        Schema::table('infografis', function (Blueprint $table) {
-            //
-        });
-    }
+public function down()
+{
+    Schema::table('infografis', function (Blueprint $table) {
+        $table->renameColumn('title', 'judul');
+        $table->renameColumn('image', 'gambar');
+    });
+}
 };
