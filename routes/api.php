@@ -35,5 +35,5 @@ Route::middleware(['auth:sanctum', 'role:admin'])->group(function () {
     Route::apiResource('/berita', BeritaController::class)->except(['index']);
     Route::apiResource('/events', EventController::class)->except(['index']);
     Route::apiResource('/infografis', InfografisController::class)->except(['index']);
-
+    Route::get('/admin/pengaduan', [ComplaintController::class, 'adminIndex']);
 });
