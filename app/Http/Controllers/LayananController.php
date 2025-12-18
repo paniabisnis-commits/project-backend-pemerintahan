@@ -29,11 +29,12 @@ class LayananController extends Controller
     {
         // 1. Validasi input
     $request->validate([
-        'kategori' => 'required',
-        'nama_layanan' => 'required',
-        'deskripsi' => 'required',
-        'gambar' => 'nullable|image|mimes:jpg,png,jpeg|max:2048'
-    ]);
+    'kategori' => 'sometimes|required',
+    'nama_layanan' => 'sometimes|required',
+    'deskripsi' => 'sometimes|required',
+    'gambar' => 'nullable|image|mimes:jpg,png,jpeg|max:2048'
+]);
+
 
     // 2. Upload gambar jika ada
     $path = null;

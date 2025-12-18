@@ -6,6 +6,8 @@ use App\Http\Controllers\ComplaintController;
 use App\Http\Controllers\Api\BeritaController;
 use App\Http\Controllers\Api\EventController;
 use App\Http\Controllers\Api\InfografisController;
+use App\Http\Controllers\LayananController;
+
 
 Route::post('register',[AuthController::class,'register']);
 Route::post('login',[AuthController::class,'login']);
@@ -28,6 +30,8 @@ Route::middleware(['auth:sanctum','role:admin'])->group(function() {
 Route::get('/berita', [BeritaController::class, 'index']);
 Route::get('/events', [EventController::class, 'index']);
 Route::get('/infografis', [InfografisController::class, 'index']);
+Route::apiResource('layanan', LayananController::class);
+
 
 // Protected (admin)
 Route::middleware(['auth:sanctum', 'role:admin'])->group(function () {
@@ -36,5 +40,5 @@ Route::middleware(['auth:sanctum', 'role:admin'])->group(function () {
     Route::apiResource('/events', EventController::class)->except(['index']);
     Route::apiResource('/infografis', InfografisController::class)->except(['index']);
     Route::get('/admin/pengaduan', [ComplaintController::class, 'adminIndex']);
-    
+    Route::apiResource('layanan', LayananController::class);
 });
