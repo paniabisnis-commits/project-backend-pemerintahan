@@ -7,17 +7,35 @@ use Illuminate\Http\Request;
 
 class ComplaintController extends Controller
 {
-    public function store(Request $r)
+    // ==========================
+    // USER: Kirim pengaduan
+    // ==========================
+    public function store(Request $request)
     {
-        $r->validate([
-            'nama_pengadu'   => 'required',
-            'isi_pengaduan'  => 'required'
+        $validated = $request->validate([
+            'nama_pengadu'  => 'required|string|max:255',
+            'email'         => 'required|email',
+            'isi_pengaduan' => 'required|string',
         ]);
 
-        $c = Complaint::create(
-            $r->only('nama_pengadu','email','isi_pengaduan')
-        );
+        $complaint = Complaint::create($validated);
 
-        return response()->json($c, 201);
+        return response()->json([
+            'message' => 'Pengaduan berhasil dikirim',
+            'data' => $complaint
+        ], 201);
+    }
+
+    // ==========================
+    // ADMIN: Lihat semua pengaduan
+    // ==========================
+    public function adminIndex()
+    {
+        $complaints = Complaint::latest()->get();
+
+        return response()->json([
+            'message' => 'Daftar semua pengaduan',
+            'data' => $complaints
+        ]);
     }
 }
