@@ -30,7 +30,8 @@ Route::middleware(['auth:sanctum','role:admin'])->group(function() {
 Route::get('/berita', [BeritaController::class, 'index']);
 Route::get('/events', [EventController::class, 'index']);
 Route::get('/infografis', [InfografisController::class, 'index']);
-Route::apiResource('layanan', LayananController::class);
+Route::get('/layanan', [LayananController::class, 'index']);
+Route::get('/layanan/{id}', [LayananController::class, 'show']);
 
 
 // Protected (admin)
@@ -40,5 +41,7 @@ Route::middleware(['auth:sanctum', 'role:admin'])->group(function () {
     Route::apiResource('/events', EventController::class)->except(['index']);
     Route::apiResource('/infografis', InfografisController::class)->except(['index']);
     Route::get('/admin/pengaduan', [ComplaintController::class, 'adminIndex']);
-    Route::apiResource('layanan', LayananController::class);
+    Route::post('/layanan', [LayananController::class, 'store']);
+    Route::put('/layanan/{id}', [LayananController::class, 'update']);
+    Route::delete('/layanan/{id}', [LayananController::class, 'destroy']);
 });
