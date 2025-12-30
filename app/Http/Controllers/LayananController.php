@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Layanan;
+use Illuminate\Support\Facades\Storage;
 
 
 class LayananController extends Controller
@@ -80,12 +81,8 @@ class LayananController extends Controller
     ]);
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
-    {
-        // 1. Cari layanan
+public function update(Request $request, string $id)
+{
     $layanan = Layanan::find($id);
 
     if (!$layanan) {
@@ -95,37 +92,49 @@ class LayananController extends Controller
         ], 404);
     }
 
-    // 2. Validasi
+    // VALIDASI (PATCH → optional)
     $request->validate([
-        'kategori' => 'required',
-        'nama_layanan' => 'required',
-        'deskripsi' => 'required',
-        'gambar' => 'nullable|image|mimes:jpg,png,jpeg|max:2048'
+        'kategori' => 'sometimes|required',
+        'nama_layanan' => 'sometimes|required',
+        'deskripsi' => 'sometimes|required',
+        'gambar' => 'sometimes|image|mimes:jpg,jpeg,png|max:2048'
     ]);
 
-    // 3. Upload gambar baru (jika ada)
+    // UPDATE FIELD TEXT
+    if ($request->has('kategori')) {
+        $layanan->kategori = $request->kategori;
+    }
+
+    if ($request->has('nama_layanan')) {
+        $layanan->nama_layanan = $request->nama_layanan;
+    }
+
+    if ($request->has('deskripsi')) {
+        $layanan->deskripsi = $request->deskripsi;
+    }
+
+    // ✅ UPDATE GAMBAR (INI KUNCI)
     if ($request->hasFile('gambar')) {
+
+        // hapus gambar lama
+        if ($layanan->gambar) {
+            Storage::disk('public')->delete($layanan->gambar);
+        }
+
+        // simpan gambar baru
         $path = $request->file('gambar')->store('layanan', 'public');
         $layanan->gambar = $path;
     }
 
-    // 4. Update field lainnya
-    $layanan->update([
-        'kategori' => $request->kategori,
-        'nama_layanan' => $request->nama_layanan,
-        'deskripsi' => $request->deskripsi
-    ]);
+    // 🔥 WAJIB
+    $layanan->save();
 
     return response()->json([
         'success' => true,
         'message' => 'Layanan berhasil diupdate',
         'data' => $layanan
     ]);
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
+}
     public function destroy(string $id)
     {
         $layanan = Layanan::find($id);

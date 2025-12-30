@@ -10,23 +10,18 @@ use Illuminate\Support\Facades\Storage;
 class BeritaController extends Controller
 {
     // GET /api/berita (pagination, search, limit)
-    public function index(Request $r)
-    {
-        $query = Berita::query();
+    public function index()
+{
+    $berita = Berita::query()
+        ->select('id', 'title', 'content', 'image', 'created_at')
+        ->orderBy('created_at', 'desc')
+        ->limit(5)
+        ->get();
 
-        // Search by title
-        if ($r->search) {
-            $query->where('title', 'like', "%{$r->search}%");
-        }
-
-        // Limit latest berita
-        if ($r->limit) {
-            return $query->latest()->take($r->limit)->get();
-        }
-
-        // Default: paginate
-        return $query->latest()->paginate(10);
-    }
+    return response()->json([
+        'data' => $berita
+    ]);
+}
 
     // POST /api/berita
     public function store(Request $r)
@@ -97,14 +92,21 @@ class BeritaController extends Controller
     }
 
     // DELETE /api/berita/{berita}
-    public function destroy(Berita $berita)
-    {
-        if ($berita->image && Storage::disk('public')->exists($berita->image)) {
-            Storage::disk('public')->delete($berita->image);
-        }
+    public function destroy($id)
+{
+    $berita = Berita::find($id);
 
-        $berita->delete();
-
-        return response()->json(['message' => 'Deleted']);
+    if (!$berita) {
+        return response()->json([
+            'message' => 'Data not found'
+        ], 404);
     }
+
+    $berita->delete();
+
+    return response()->json([
+        'message' => 'Deleted'
+    ], 200);
+}
+
 }

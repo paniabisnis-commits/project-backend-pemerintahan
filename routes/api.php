@@ -10,18 +10,15 @@ use App\Http\Controllers\Api\InfografisController;
 use App\Http\Controllers\LayananController;
 
 
-Route::post('register',[AuthController::class,'register']);
-Route::post('login',[AuthController::class,'login']);
+Route::post('/register', [AuthController::class, 'register']);
+Route::post('/login', [AuthController::class, 'login']);
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return response()->json([
-        'user' => $request->user()
-    ]);
-});
-Route::middleware('auth:sanctum')->group(function() {
-    Route::get('profile',[AuthController::class,'profile']);
-    Route::put('profile',[AuthController::class,'updateProfile']);
-    Route::post('logout',[AuthController::class,'logout']);
+// ✅ BARU PAKAI auth:sanctum
+Route::middleware('auth:sanctum')->group(function () {
+    Route::post('/logout', [AuthController::class, 'logout']);
+    Route::get('/profile', [AuthController::class, 'profile']);
+    Route::put('/profile', [AuthController::class, 'updateProfile']);
+    Route::get('/user', [AuthController::class, 'user']);
     Route::post('pengaduan', [ComplaintController::class, 'store']);
     Route::get('pengaduan', [ComplaintController::class, 'index']);
     Route::get('pengaduan/stats', [ComplaintController::class, 'stats']);
@@ -48,6 +45,11 @@ Route::middleware(['auth:sanctum', 'role:admin'])->group(function () {
     Route::apiResource('/infografis', InfografisController::class)->except(['index']);
     Route::get('/admin/pengaduan', [ComplaintController::class, 'adminIndex']);
     Route::post('/layanan', [LayananController::class, 'store']);
-    Route::put('/layanan/{id}', [LayananController::class, 'update']);
+    Route::match(['put', 'patch'], '/layanan/{id}', [LayananController::class, 'update']);
+
+
     Route::delete('/layanan/{id}', [LayananController::class, 'destroy']);
+    Route::delete('/berita/{id}', [BeritaController::class, 'destroy']);
+    Route::delete('/pengaduan/{id}', [ComplaintController::class, 'destroy']);
+
 });

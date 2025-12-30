@@ -8,22 +8,16 @@ use App\Models\Event;
 
 class EventController extends Controller
 {
-    public function index(Request $r)
+    public function index()
     {
-        $query = Event::query();
+        $events = Event::orderBy('event_date', 'asc')->get();
 
-        // Search
-        if ($r->search) {
-            $query->where('title', 'like', "%{$r->search}%");
-        }
-
-        // Filter tanggal event
-        if ($r->date) {
-            $query->whereDate('event_date', $r->date);
-        }
-
-        return $query->latest()->paginate(10);
+        return response()->json([
+            'success' => true,
+            'data' => $events
+        ]);
     }
+
 
     public function store(Request $r)
     {

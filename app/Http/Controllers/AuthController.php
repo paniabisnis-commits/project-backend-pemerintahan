@@ -47,26 +47,25 @@ class AuthController extends Controller
 
     $user = User::where('email', $request->email)->first();
 
-    if (!$user) {
+    if (!$user || !Hash::check($request->password, $user->password)) {
         return response()->json([
-            'message' => 'Email not found'
-        ], 404);
-    }
-
-    if (!Hash::check($request->password, $user->password)) {
-        return response()->json([
-            'message' => 'Invalid password'
+            'message' => 'Email atau password salah'
         ], 401);
     }
 
+    // 🔴 PENTING: hapus semua token lama
+    $user->tokens()->delete();
+
+    // 🔑 BUAT TOKEN BARU
     $token = $user->createToken('auth_token')->plainTextToken;
 
     return response()->json([
         'message' => 'Login successful',
-        'token' => $token,
-        'user' => $user
-    ]);
+        'token'   => $token,
+        'user'    => $user
+    ], 200);
 }
+
 
 
     /**

@@ -20,31 +20,57 @@ class BeritaResource extends Resource
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
     public static function form(Form $form): Form
-    {
-        return $form
-            ->schema([
-                //
-            ]);
-    }
+{
+    return $form
+        ->schema([
+            Forms\Components\TextInput::make('title')
+                ->label('Judul Berita')
+                ->required()
+                ->maxLength(255),
+
+            Forms\Components\Textarea::make('content')
+                ->label('Isi Berita')
+                ->required()
+                ->rows(6),
+
+            Forms\Components\FileUpload::make('image')
+                ->label('Gambar Berita')
+                ->image()
+                ->directory('news')
+                ->disk('public')
+                ->imagePreviewHeight('200')
+                ->required(),
+        ]);
+}
 
     public static function table(Table $table): Table
-    {
-        return $table
-            ->columns([
-                //
-            ])
-            ->filters([
-                //
-            ])
-            ->actions([
-                Tables\Actions\EditAction::make(),
-            ])
-            ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
-                ]),
-            ]);
-    }
+{
+    return $table
+        ->columns([
+            Tables\Columns\ImageColumn::make('image')
+                ->label('Gambar')
+                ->disk('public')
+                ->height(60),
+
+            Tables\Columns\TextColumn::make('title')
+                ->label('Judul')
+                ->searchable()
+                ->sortable(),
+
+            Tables\Columns\TextColumn::make('created_at')
+                ->label('Tanggal')
+                ->date('d M Y')
+                ->sortable(),
+        ])
+        ->actions([
+            Tables\Actions\EditAction::make(),
+            Tables\Actions\DeleteAction::make(),
+        ])
+        ->bulkActions([
+            Tables\Actions\DeleteBulkAction::make(),
+        ]);
+}
+
 
     public static function getRelations(): array
     {
