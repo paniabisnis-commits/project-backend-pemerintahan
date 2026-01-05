@@ -15,7 +15,6 @@ class BeritaController extends Controller
     $berita = Berita::query()
         ->select('id', 'title', 'content', 'image', 'created_at')
         ->orderBy('created_at', 'desc')
-        ->limit(5)
         ->get();
 
     return response()->json([

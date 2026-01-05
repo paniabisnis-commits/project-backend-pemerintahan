@@ -1,11 +1,128 @@
-@import 'tailwindcss';
+.admin-dashboard {
+    padding: 2rem 0;
+    max-width: 900px;
+}
 
-@source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
-@source '../../storage/framework/views/*.php';
-@source '../**/*.blade.php';
-@source '../**/*.js';
+/* Judul */
+.admin-title {
+    font-size: 1.7rem;
+    font-weight: 700;
+    color: #065f46;
+    margin-bottom: 1.4rem;
+}
 
-@theme {
-    --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
-        'Segoe UI Symbol', 'Noto Color Emoji';
+/* CLOCK WRAPPER */
+.admin-clock-wrapper {
+    text-align: center;
+    margin-bottom: 2rem;
+    padding: 1.2rem;
+    border-radius: 14px;
+    background: linear-gradient(
+        145deg,
+        rgba(16, 185, 129, 0.08),
+        rgba(16, 185, 129, 0.02)
+    );
+}
+
+/* Hari */
+.admin-day {
+    font-size: 0.95rem;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: #047857;
+    margin-bottom: 6px;
+}
+
+/* Jam realtime */
+.admin-clock {
+    font-size: 2.4rem;
+    font-weight: 800;
+    color: #10b981;
+    text-shadow: 0 0 10px rgba(16, 185, 129, 0.6);
+    animation: glowPulse 1.8s infinite alternate;
+}
+
+/* Tanggal */
+.admin-date {
+    font-size: 0.9rem;
+    margin-top: 4px;
+    color: #065f46;
+}
+
+/* Glow animation */
+@keyframes glowPulse {
+    from {
+        text-shadow: 0 0 6px rgba(16, 185, 129, 0.4);
+    }
+    to {
+        text-shadow: 0 0 16px rgba(16, 185, 129, 1);
+    }
+}
+
+/* Deskripsi */
+.admin-desc {
+    margin-top: 1.6rem;
+    margin-bottom: 1.8rem;
+    color: #065f46;
+    max-width: 780px;
+    line-height: 1.75;
+    font-size: 0.95rem;
+}
+
+/* Catatan */
+.admin-note {
+    padding-left: 1rem;
+    border-left: 4px solid #10b981;
+    color: #047857;
+}
+
+.admin-note strong {
+    display: block;
+    margin-bottom: 8px;
+}
+
+.admin-note ul {
+    padding-left: 1.2rem;
+}
+
+.admin-note li {
+    margin-bottom: 8px;
+    line-height: 1.6;
+}
+
+/* ===============================
+   DARK MODE
+================================ */
+
+.dark .admin-title,
+.dark .admin-desc,
+.dark .admin-note,
+.dark .admin-day,
+.dark .admin-date {
+    color: #34d399 !important;
+}
+
+.dark .admin-clock {
+    color: #6ee7b7;
+    text-shadow: 0 0 18px rgba(110, 231, 183, 1);
+}
+
+/* ===============================
+   SIDEBAR EFFECT
+================================ */
+
+.fi-sidebar-item a {
+    transition: all 0.25s ease;
+    border-radius: 10px;
+}
+
+.fi-sidebar-item a:hover {
+    background: rgba(16, 185, 129, 0.18);
+    transform: translateX(6px);
+}
+
+.fi-sidebar-item-active a {
+    background: rgba(16, 185, 129, 0.3);
+    color: #10b981;
+    font-weight: 600;
 }

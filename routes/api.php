@@ -8,7 +8,7 @@ use App\Http\Controllers\Api\BeritaController;
 use App\Http\Controllers\Api\EventController;
 use App\Http\Controllers\Api\InfografisController;
 use App\Http\Controllers\LayananController;
-
+use App\Http\Controllers\AdminUserController;
 
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
@@ -46,10 +46,15 @@ Route::middleware(['auth:sanctum', 'role:admin'])->group(function () {
     Route::get('/admin/pengaduan', [ComplaintController::class, 'adminIndex']);
     Route::post('/layanan', [LayananController::class, 'store']);
     Route::match(['put', 'patch'], '/layanan/{id}', [LayananController::class, 'update']);
+    
 
 
     Route::delete('/layanan/{id}', [LayananController::class, 'destroy']);
     Route::delete('/berita/{id}', [BeritaController::class, 'destroy']);
     Route::delete('/pengaduan/{id}', [ComplaintController::class, 'destroy']);
 
+});
+
+Route::middleware(['auth:sanctum', 'role:admin'])->group(function () {
+    Route::get('/admin/users', [AdminUserController::class, 'index']);
 });

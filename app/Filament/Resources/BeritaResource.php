@@ -50,6 +50,7 @@ class BeritaResource extends Resource
             Tables\Columns\ImageColumn::make('image')
                 ->label('Gambar')
                 ->disk('public')
+                ->visibility('public')
                 ->height(60),
 
             Tables\Columns\TextColumn::make('title')
