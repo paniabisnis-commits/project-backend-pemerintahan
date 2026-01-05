@@ -6,77 +6,141 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Berita;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 
 class BeritaController extends Controller
 {
-    // GET /api/berita (pagination, search, limit)
+    /**
+     * GET /api/berita
+     * List berita
+     */
     public function index()
-{
-    $berita = Berita::query()
-        ->select('id', 'title', 'content', 'image', 'created_at')
-        ->orderBy('created_at', 'desc')
-        ->get();
+    {
+        $berita = Berita::select(
+                'id',
+                'title',
+                'slug',
+                'content',
+                'image',
+                'created_at'
+            )
+            ->orderBy('created_at', 'desc')
+            ->get();
 
-    return response()->json([
-        'data' => $berita
-    ]);
-}
+        return response()->json([
+            'data' => $berita
+        ]);
+    }
 
-    // POST /api/berita
+    /**
+     * POST /api/berita
+     * Simpan berita baru + auto slug
+     */
     public function store(Request $r)
     {
         $r->validate([
-            'title' => 'required',
-            'content' => 'required',
-            'image' => 'nullable|image|max:2048',
+            'title'   => 'required|string',
+            'content' => 'required|string',
+            'image'   => 'nullable|image|max:2048',
         ]);
 
-        // Upload image
-        $imagePath = $r->file('image')
-            ? $r->file('image')->store('news', 'public')
-            : null;
+        // ===============================
+        // GENERATE SLUG (UNIK)
+        // ===============================
+        $slug = Str::slug($r->title);
+        $count = Berita::where('slug', 'like', "$slug%")->count();
 
+        if ($count > 0) {
+            $slug = $slug . '-' . ($count + 1);
+        }
+
+        // ===============================
+        // UPLOAD IMAGE
+        // ===============================
+        $imagePath = null;
+        if ($r->hasFile('image')) {
+            $imagePath = $r->file('image')->store('news', 'public');
+        }
+
+        // ===============================
+        // SIMPAN DATA
+        // ===============================
         $berita = Berita::create([
             'title'   => $r->title,
+            'slug'    => $slug,
             'content' => $r->content,
             'image'   => $imagePath,
         ]);
 
-        return response()->json($berita, 201);
-    }
-
-    // GET /api/berita/{berita}
-    public function show($id)
-{
-    $berita = Berita::find($id);
-
-    if (!$berita) {
         return response()->json([
-            'success' => false,
-            'message' => 'Berita tidak ditemukan',
-            'data' => null
-        ], 404);
+            'success' => true,
+            'message' => 'Berita berhasil ditambahkan',
+            'data'    => $berita
+        ], 201);
     }
 
-    return response()->json([
-        'success' => true,
-        'message' => 'Detail berita ditemukan',
-        'data' => $berita
-    ]);
-}
-
-
-    // PUT/PATCH /api/berita/{berita}
-    public function update(Request $r, Berita $berita)
+    /**
+     * GET /api/berita/{slug}
+     * Detail berita by slug
+     */
+    public function show($slug)
     {
+        $berita = Berita::where('slug', $slug)->first();
+
+        if (!$berita) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Berita tidak ditemukan'
+            ], 404);
+        }
+
+        return response()->json([
+            'success' => true,
+            'data' => $berita
+        ]);
+    }
+
+    /**
+     * PUT /api/berita/{id}
+     * Update berita + update slug jika title berubah
+     */
+    public function update(Request $r, $id)
+    {
+        $berita = Berita::find($id);
+
+        if (!$berita) {
+            return response()->json([
+                'message' => 'Berita tidak ditemukan'
+            ], 404);
+        }
+
         $r->validate([
-            'title' => 'sometimes',
-            'content' => 'sometimes',
-            'image' => 'nullable|image|max:2048',
+            'title'   => 'sometimes|string',
+            'content' => 'sometimes|string',
+            'image'   => 'nullable|image|max:2048',
         ]);
 
-        // If upload new image, replace old
-        if ($r->file('image')) {
+        // ===============================
+        // UPDATE SLUG JIKA TITLE DIUBAH
+        // ===============================
+        if ($r->filled('title') && $r->title !== $berita->title) {
+            $slug = Str::slug($r->title);
+            $count = Berita::where('slug', 'like', "$slug%")
+                ->where('id', '!=', $berita->id)
+                ->count();
+
+            if ($count > 0) {
+                $slug = $slug . '-' . ($count + 1);
+            }
+
+            $berita->slug = $slug;
+            $berita->title = $r->title;
+        }
+
+        // ===============================
+        // UPDATE IMAGE JIKA ADA
+        // ===============================
+        if ($r->hasFile('image')) {
             if ($berita->image && Storage::disk('public')->exists($berita->image)) {
                 Storage::disk('public')->delete($berita->image);
             }
@@ -84,28 +148,43 @@ class BeritaController extends Controller
             $berita->image = $r->file('image')->store('news', 'public');
         }
 
-        // Update text fields
-        $berita->update($r->only(['title', 'content']));
+        // ===============================
+        // UPDATE CONTENT
+        // ===============================
+        if ($r->filled('content')) {
+            $berita->content = $r->content;
+        }
 
-        return $berita;
-    }
+        $berita->save();
 
-    // DELETE /api/berita/{berita}
-    public function destroy($id)
-{
-    $berita = Berita::find($id);
-
-    if (!$berita) {
         return response()->json([
-            'message' => 'Data not found'
-        ], 404);
+            'success' => true,
+            'message' => 'Berita berhasil diperbarui',
+            'data' => $berita
+        ]);
     }
 
-    $berita->delete();
+    /**
+     * DELETE /api/berita/{id}
+     */
+    public function destroy($id)
+    {
+        $berita = Berita::find($id);
 
-    return response()->json([
-        'message' => 'Deleted'
-    ], 200);
-}
+        if (!$berita) {
+            return response()->json([
+                'message' => 'Data tidak ditemukan'
+            ], 404);
+        }
 
+        if ($berita->image && Storage::disk('public')->exists($berita->image)) {
+            Storage::disk('public')->delete($berita->image);
+        }
+
+        $berita->delete();
+
+        return response()->json([
+            'message' => 'Berita berhasil dihapus'
+        ]);
+    }
 }

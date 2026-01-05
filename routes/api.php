@@ -31,6 +31,7 @@ Route::middleware(['auth:sanctum','role:admin'])->group(function() {
 
 // Public
 Route::get('/berita', [BeritaController::class, 'index']);
+Route::get('/berita/{slug}', [BeritaController::class, 'showBySlug']);
 Route::get('/events', [EventController::class, 'index']);
 Route::get('/infografis', [InfografisController::class, 'index']);
 Route::get('/layanan', [LayananController::class, 'index']);
