@@ -17,20 +17,18 @@ class BeritaController extends Controller
     public function index()
 {
     $berita = Berita::query()
-        ->select('id', 'title', 'slug', 'content', 'image', 'created_at')
+        ->select('id', 'title', 'slug', 'content', 'image', 'created_at', 'updated_at')
         ->orderBy('created_at', 'desc')
-        ->get();
+        ->get()
+        ->map(function($b){
+            $b->gambar_url = $b->image ? asset('storage/'.$b->image) : null;
+            return $b;
+        });
 
     return response()->json([
         'data' => $berita
     ]);
 }
-
-
-    /**
-     * POST /api/berita
-     * Simpan berita baru + auto slug
-     */
     public function store(Request $r)
     {
         $r->validate([
