@@ -37,6 +37,42 @@ class ComplaintController extends Controller
             'data' => Complaint::latest()->get()
         ]);
     }
+
+    public function adminIndex()
+{
+    return response()->json([
+        'data' => Complaint::latest()->get()
+    ]);
+}
+
+// ==========================
+// ADMIN: Update status pengaduan
+// ==========================
+public function updateStatus(Request $request, $id)
+{
+    $request->validate([
+        'status' => 'required|in:baru,diproses,selesai'
+    ]);
+
+    $complaint = Complaint::find($id);
+
+    if (!$complaint) {
+        return response()->json([
+            'success' => false,
+            'message' => 'Pengaduan tidak ditemukan'
+        ], 404);
+    }
+
+    $complaint->status = $request->status;
+    $complaint->save();
+
+    return response()->json([
+        'success' => true,
+        'message' => 'Status pengaduan berhasil diperbarui',
+        'data' => $complaint
+    ]);
+}
+
     public function destroy(Request $request, $id)
         {
             $complaint = Complaint::find($id);

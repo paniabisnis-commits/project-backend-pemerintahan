@@ -6,23 +6,19 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
-    public function up()
-{
-    Schema::create('beritas', function (Blueprint $table) {
-        $table->id();
-        $table->string('title');
-        $table->text('content');
-        $table->string('image')->nullable();
-        $table->timestamps();
-    });
-}
+    public function up(): void
+    {
+        Schema::create('beritas', function (Blueprint $table) {
+            $table->id();
+            $table->string('title');
+            $table->string('slug')->nullable(); // TAMBAHKAN INI
+            $table->text('content');
+            $table->string('image')->nullable();
+            $table->timestamps();
+            $table->softDeletes(); // Optional
+        });
+    }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
         Schema::dropIfExists('beritas');

@@ -9,6 +9,8 @@ use App\Http\Controllers\Api\EventController;
 use App\Http\Controllers\Api\InfografisController;
 use App\Http\Controllers\LayananController;
 use App\Http\Controllers\AdminUserController;
+use App\Http\Controllers\Admin\ProfileController;
+use App\Http\Controllers\Admin\ActivityController;
 
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
@@ -22,16 +24,18 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('pengaduan', [ComplaintController::class, 'store']);
     Route::get('pengaduan', [ComplaintController::class, 'index']);
     Route::get('pengaduan/stats', [ComplaintController::class, 'stats']);
+    
 });
 
 Route::middleware(['auth:sanctum','role:admin'])->group(function() {
+    Route::post('/admin/profile/avatar', [ProfileController::class, 'updateAvatar']);
     Route::get('admin/pengaduan',[ComplaintController::class,'adminIndex']);
-    Route::put('admin/pengaduan/{complaint}/status',[ComplaintController::class,'updateStatus']);
+    Route::put('admin/pengaduan/{id}/status',[ComplaintController::class,'updateStatus']);
 });
 
 // Public
 Route::get('/berita', [BeritaController::class, 'index']);
-Route::get('/berita/{slug}', [BeritaController::class, 'showBySlug']);
+Route::get('/berita/slug/{slug}', [BeritaController::class, 'show']);
 Route::get('/events', [EventController::class, 'index']);
 Route::get('/infografis', [InfografisController::class, 'index']);
 Route::get('/layanan', [LayananController::class, 'index']);
@@ -39,7 +43,7 @@ Route::get('/layanan/{id}', [LayananController::class, 'show']);
 
 
 // Protected (admin)
-Route::middleware(['auth:sanctum', 'role:admin'])->group(function () {
+Route::middleware(['auth:sanctum','role:admin'])->group(function () {
 
     Route::apiResource('/berita', BeritaController::class)->except(['index']);
     Route::apiResource('/events', EventController::class)->except(['index']);
@@ -47,15 +51,10 @@ Route::middleware(['auth:sanctum', 'role:admin'])->group(function () {
     Route::get('/admin/pengaduan', [ComplaintController::class, 'adminIndex']);
     Route::post('/layanan', [LayananController::class, 'store']);
     Route::match(['put', 'patch'], '/layanan/{id}', [LayananController::class, 'update']);
-    
-
-
     Route::delete('/layanan/{id}', [LayananController::class, 'destroy']);
     Route::delete('/berita/{id}', [BeritaController::class, 'destroy']);
     Route::delete('/pengaduan/{id}', [ComplaintController::class, 'destroy']);
-
-});
-
-Route::middleware(['auth:sanctum', 'role:admin'])->group(function () {
     Route::get('/admin/users', [AdminUserController::class, 'index']);
+    Route::get('/admin/activities', [ActivityController::class, 'index']);
+
 });

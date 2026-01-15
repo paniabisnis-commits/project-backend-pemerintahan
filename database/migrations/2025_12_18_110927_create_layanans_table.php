@@ -9,23 +9,23 @@ return new class extends Migration
     /**
      * Run the migrations.
      */
-    public function up(): void
-    {
-    Schema::create('layanans', function (Blueprint $table) {
-        $table->id();
-        $table->string('kategori');
-        $table->string('nama_layanan');
-        $table->text('deskripsi');
-        $table->string('gambar')->nullable();
-        $table->timestamps();
-    });
+    public function up()
+{
+    // CEK DULU apakah tabel sudah ada
+    if (!Schema::hasTable('layanans')) {
+        Schema::create('layanans', function (Blueprint $table) {
+            $table->id();
+            $table->string('kategori');
+            $table->string('nama_layanan');
+            $table->text('deskripsi');
+            $table->string('gambar')->nullable();
+            $table->timestamps();
+        });
+    }
 }
 
-    /**
-     * Reverse the migrations.
-     */
-    public function down(): void
-    {
-        Schema::dropIfExists('layanans');
-    }
+public function down()
+{
+    Schema::dropIfExists('layanans');
+}
 };

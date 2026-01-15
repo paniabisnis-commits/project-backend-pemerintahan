@@ -12,6 +12,7 @@ class Complaint extends Model
     protected $fillable = [
         'nama_pengadu',
         'email',
-        'isi_pengaduan'
+        'isi_pengaduan',
+        'status',
     ];
 }

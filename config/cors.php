@@ -2,26 +2,16 @@
 
 return [
 
-    /*
-    |--------------------------------------------------------------------------
-    | Laravel CORS Configuration
-    |--------------------------------------------------------------------------
-    |
-    | This configuration controls your application's handling of Cross-Origin
-    | Resource Sharing (CORS). This determines which cross-origin operations
-    | may be executed in web browsers. You are free to adjust these settings
-    | as needed for your application.
-    |
-    */
-
     'paths' => [
-        'api/*',              // izinkan semua endpoint API
+        'api/*',
+        'admin/*',
         'login',
         'logout',
+        'register',
         'sanctum/csrf-cookie'
     ],
 
-    'allowed_methods' => ['*'], // semua metode: GET, POST, PUT, PATCH, DELETE
+    'allowed_methods' => ['*'],
 
     'allowed_origins' => [
         'http://localhost:5173',
@@ -30,12 +20,12 @@ return [
 
     'allowed_origins_patterns' => [],
 
-    'allowed_headers' => ['*'], // semua header boleh
+    'allowed_headers' => ['*'],
 
     'exposed_headers' => [],
 
     'max_age' => 0,
 
-    // Jika tidak pakai cookie (karena Sanctum token mode), maka false
-    'supports_credentials' => false,
+    'supports_credentials' => true,
+
 ];

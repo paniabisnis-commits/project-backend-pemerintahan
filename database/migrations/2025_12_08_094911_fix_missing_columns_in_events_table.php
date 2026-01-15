@@ -19,7 +19,8 @@ return new class extends Migration
             }
 
             if (!Schema::hasColumn('events', 'event_date')) {
-                $table->date('event_date')->after('description');
+                // ✅ WAJIB nullable
+                $table->date('event_date')->nullable()->after('description');
             }
 
             if (!Schema::hasColumn('events', 'image')) {
@@ -33,17 +34,20 @@ return new class extends Migration
     {
         Schema::table('events', function (Blueprint $table) {
 
-            if (Schema::hasColumn('events', 'title')) {
-                $table->dropColumn('title');
+            if (Schema::hasColumn('events', 'image')) {
+                $table->dropColumn('image');
             }
-            if (Schema::hasColumn('events', 'description')) {
-                $table->dropColumn('description');
-            }
+
             if (Schema::hasColumn('events', 'event_date')) {
                 $table->dropColumn('event_date');
             }
-            if (Schema::hasColumn('events', 'image')) {
-                $table->dropColumn('image');
+
+            if (Schema::hasColumn('events', 'description')) {
+                $table->dropColumn('description');
+            }
+
+            if (Schema::hasColumn('events', 'title')) {
+                $table->dropColumn('title');
             }
 
         });

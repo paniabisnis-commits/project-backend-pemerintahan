@@ -22,8 +22,8 @@ class EventController extends Controller
     public function store(Request $r)
     {
         $r->validate([
-            'title' => 'required',
-            'description' => 'required',
+            'title' => 'required|string|min:3',
+            'description' => 'required|string|min:5',
             'event_date' => 'required|date',
             'image' => 'nullable|image|max:2048',
         ]);

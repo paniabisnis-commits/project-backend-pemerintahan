@@ -11,14 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('complaints', function (Blueprint $table) {
-    $table->id();
-    $table->string('nama_pengadu');
-    $table->string('email')->nullable();
-    $table->text('isi_pengaduan');
-    $table->string('status')->default('baru');
-    $table->timestamps();
+        Schema::table('users', function (Blueprint $table) {
+    $table->string('avatar')->nullable()->after('email');
 });
+
     }
 
     /**
@@ -26,6 +22,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('complaints');
+        Schema::table('users', function (Blueprint $table) {
+            //
+        });
     }
 };

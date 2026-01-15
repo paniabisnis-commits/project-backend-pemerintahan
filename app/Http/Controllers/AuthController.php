@@ -42,7 +42,7 @@ class AuthController extends Controller
 {
     $request->validate([
         'email' => 'required|email',
-        'password' => 'required'
+        'password' => 'required',
     ]);
 
     $user = User::where('email', $request->email)->first();
@@ -53,38 +53,12 @@ class AuthController extends Controller
         ], 401);
     }
 
-    // 🔴 PENTING: hapus semua token lama
-    $user->tokens()->delete();
-
-    // 🔑 BUAT TOKEN BARU
+    // ⬇️ TOKEN SANCTUM
     $token = $user->createToken('auth_token')->plainTextToken;
 
     return response()->json([
-        'message' => 'Login successful',
-        'token'   => $token,
-        'user'    => $user
-    ], 200);
-}
-
-
-
-    /**
-     * LOGOUT
-     */
-    public function logout(Request $request)
-    {
-        // Hapus token sekarang
-        $request->user()->currentAccessToken()->delete();
-
-        return response()->json([
-            'message' => 'Logged out successfully'
-        ]);
-    }
-
-    public function profile(Request $request)
-{
-    return response()->json([
-        'user' => $request->user()
+        'token' => $token,
+        'user' => $user
     ]);
 }
 

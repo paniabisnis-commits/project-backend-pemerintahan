@@ -15,22 +15,17 @@ class BeritaController extends Controller
      * List berita
      */
     public function index()
-    {
-        $berita = Berita::select(
-                'id',
-                'title',
-                'slug',
-                'content',
-                'image',
-                'created_at'
-            )
-            ->orderBy('created_at', 'desc')
-            ->get();
+{
+    $berita = Berita::query()
+        ->select('id', 'title', 'slug', 'content', 'image', 'created_at')
+        ->orderBy('created_at', 'desc')
+        ->get();
 
-        return response()->json([
-            'data' => $berita
-        ]);
-    }
+    return response()->json([
+        'data' => $berita
+    ]);
+}
+
 
     /**
      * POST /api/berita
