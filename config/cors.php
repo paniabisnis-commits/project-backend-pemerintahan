@@ -1,12 +1,8 @@
 <?php
 
 return [
-    'paths' => [
-        'api/*',
-        'login',
-        'logout',
-        'sanctum/csrf-cookie',
-    ],
+
+    'paths' => ['api/*', 'sanctum/csrf-cookie'],
 
     'allowed_methods' => ['*'],
 
@@ -15,7 +11,13 @@ return [
         'http://127.0.0.1:5173',
     ],
 
+    'allowed_origins_patterns' => [],
+
     'allowed_headers' => ['*'],
+
+    'exposed_headers' => [],
+
+    'max_age' => 0,
 
     'supports_credentials' => true,
 ];
